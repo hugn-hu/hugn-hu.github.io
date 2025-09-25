@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>烟野的生日祝福</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        party: {
+                            pink: '#FF5CA8',
+                            gold: '#FFD700',
+                            blue: '#4A90E2',
+                            purple: '#9B6EF3'
+                        }
+                    },
+                    fontFamily: {
+                        celebration: ['"Comic Sans MS"', '"Arial Rounded MT Bold"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 
+                             0 0 20px rgba(255, 215, 0, 0.5);
+            }
+            .animate-pulse-slow {
+                animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+            .animate-float {
+                animation: float 3s ease-in-out infinite;
+            }
+            .cake-layer {
+                border-radius: 10px 10px 0 0;
+            }
+            .cake-top {
+                border-radius: 50%;
+            }
+            .candle-flame {
+                animation: flicker 0.5s infinite alternate;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(0.9) rotate(-2deg); opacity: 0.8; }
+            100% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+        }
+
+        #fireworks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .firework {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100 min-h-screen flex items-center justify-center p-4 overflow-hidden">
+    <!-- 烟花容器 -->
+    <div id="fireworks-container"></div>
+
+    <!-- 初始状态：点击按钮 -->
+    <div id="initialState" class="text-center transition-all duration-500">
+        <button id="celebrateBtn" class="bg-gradient-to-r from-party-pink to-party-purple text-white font-celebration text-xl md:text-2xl py-4 px-10 rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all animate-pulse-slow focus:outline-none">
+            <i class="fa fa-gift mr-2"></i>小寿星请点击
+        </button>
+    </div>
+
+    <!-- 祝福状态：隐藏，点击后显示 -->
+    <div id="celebrationState" class="hidden text-center">
+        <h1 class="text-[clamp(2rem,8vw,5rem)] font-celebration font-bold text-party-gold mb-8 animate-float text-shadow">
+            烟野，生日快乐！
+        </h1>
+        
+        <!-- 小蛋糕 -->
+        <div class="relative w-48 h-64 mx-auto mb-8 animate-float" style="animation-delay: 0.5s;">
+            <!-- 蛋糕底部 -->
+            <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-16 bg-party-pink cake-layer"></div>
+            <!-- 蛋糕中间 -->
+            <div class="absolute bottom-14 left-1/2 transform -translate-x-1/2 w-40 h-16 bg-party-purple cake-layer"></div>
+            <!-- 蛋糕顶部 -->
+            <div class="absolute bottom-28 left-1/2 transform -translate-x-1/2 w-32 h-14 bg-party-blue cake-layer"></div>
+            <!-- 奶油顶部 -->
+            <div class="absolute bottom-40 left-1/2 transform -translate-x-1/2 w-24 h-8 bg-white cake-top"></div>
+            <!-- 蜡烛 -->
+            <div class="absolute bottom-48 left-1/2 transform -translate-x-1/2 w-2 h-12 bg-party-gold"></div>
+            <!-- 火焰 -->
+            <div class="absolute bottom-60 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-yellow rounded-full candle-flame"></div>
+            <!-- 装饰 -->
+            <div class="absolute bottom-10 left-1/4 w-3 h-3 bg-white rounded-full"></div>
+            <div class="absolute bottom-10 right-1/4 w-3 h-3 bg-white rounded-full"></div>
+            <div class="absolute bottom-24 left-1/3 w-3 h-3 bg-white rounded-full"></div>
+            <div class="absolute bottom-24 right-1/3 w-3 h-3 bg-white rounded-full"></div>
+        </div>
+        
+        <p class="text-gray-700 font-celebration text-lg md:text-xl">
+            愿所有美好与你相伴！
+        </p>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const celebrateBtn = document.getElementById('celebrateBtn');
+        const initialState = document.getElementById('initialState');
+        const celebrationState = document.getElementById('celebrationState');
+        const fireworksContainer = document.getElementById('fireworks-container');
+
+        // 点击按钮触发庆祝效果
+        celebrateBtn.addEventListener('click', () => {
+            // 隐藏初始状态，显示庆祝状态
+            initialState.classList.add('opacity-0');
+            setTimeout(() => {
+                initialState.classList.add('hidden');
+                celebrationState.classList.remove('hidden');
+                // 触发烟花效果
+                launchFireworks(15); // 发射15个烟花
+            }, 500);
+        });
+
+        // 烟花效果函数
+        function launchFireworks(count) {
+            // 烟花颜色
+            const colors = [
+                '#FF5CA8', '#FFD700', '#4A90E2', '#9B6EF3', 
+                '#FF6B6B', '#4ECDC4', '#FFA07A', '#98D8C8'
+            ];
+            
+            for (let i = 0; i < count; i++) {
+                // 随机延迟发射每个烟花
+                setTimeout(() => {
+                    // 随机位置
+                    const startX = Math.random() * window.innerWidth;
+                    const startY = window.innerHeight;
+                    
+                    // 随机目标位置（烟花爆炸点）
+                    const targetY = Math.random() * window.innerHeight * 0.6 + window.innerHeight * 0.1;
+                    const targetX = Math.random() * window.innerWidth;
+                    
+                    // 随机颜色
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    // 创建烟花发射体
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = `${startX}px`;
+                    firework.style.top = `${startY}px`;
+                    firework.style.backgroundColor = color;
+                    fireworksContainer.appendChild(firework);
+                    
+                    // 发射动画
+                    const duration = Math.random() * 1000 + 1000; // 1-2秒
+                    let startTime = null;
+                    
+                    function animateLaunch(timestamp) {
+                        if (!startTime) startTime = timestamp;
+                        const progress = (timestamp - startTime) / duration;
+                        
+                        if (progress < 1) {
+                            // 计算当前位置（抛物线）
+                            const x = startX + (targetX - startX) * progress;
+                            const y = startY - (startY - targetY) * progress + 
+                                     50 * Math.sin(progress * Math.PI); // 轻微弧线
+                            
+                            firework.style.left = `${x}px`;
+                            firework.style.top = `${y}px`;
+                            requestAnimationFrame(animateLaunch);
+                        } else {
+                            // 到达目标位置，爆炸
+                            explodeFirework(targetX, targetY, color);
+                            firework.remove();
+                        }
+                    }
+                    
+                    requestAnimationFrame(animateLaunch);
+                }, i * 500); // 每个烟花间隔500ms
+            }
+        }
+
+        // 烟花爆炸效果
+        function explodeFirework(x, y, color) {
+            const particleCount = 80; // 爆炸粒子数量
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework';
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.backgroundColor = color;
+                particle.style.width = `${Math.random() * 3 + 2}px`;
+                particle.style.height = `${Math.random() * 3 + 2}px`;
+                fireworksContainer.appendChild(particle);
+                
+                // 随机方向和速度
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 6 + 4;
+                const vx = Math.cos(angle) * speed;
+                const vy = Math.sin(angle) * speed;
+                
+                // 爆炸动画
+                const duration = Math.random() * 1500 + 1500; // 1.5-3秒
+                let startTime = null;
+                const gravity = 0.01;
+                
+                function animateExplosion(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const progress = (timestamp - startTime) / duration;
+                    
+                    if (progress < 1) {
+                        // 更新位置
+                        const currentX = x + vx * (timestamp - startTime) / 20;
+                        const currentY = y + vy * (timestamp - startTime) / 20 + 
+                                        0.5 * gravity * Math.pow((timestamp - startTime) / 20, 2);
+                        
+                        particle.style.left = `${currentX}px`;
+                        particle.style.top = `${currentY}px`;
+                        
+                        // 逐渐淡出
+                        particle.style.opacity = 1 - progress;
+                        
+                        requestAnimationFrame(animateExplosion);
+                    } else {
+                        particle.remove();
+                    }
+                }
+                
+                requestAnimationFrame(animateExplosion);
+            }
+        }
+    </script>
+</body>
+</html>
