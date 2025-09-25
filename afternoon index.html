@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下午好问候</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // 主色调：深紫色
+                        secondary: '#EC4899', // 辅助色：粉色
+                        accent: '#F59E0B', // 强调色：橙色
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 flex flex-col items-center justify-center p-4 font-sans">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden transform transition-custom hover:shadow-2xl">
+        <!-- 头部装饰 -->
+        <div class="h-24 bg-gradient-to-r from-primary to-secondary relative overflow-hidden">
+            <div class="absolute inset-0 opacity-20">
+                <i class="fa fa-sun-o text-9xl absolute -right-10 -top-10 text-white"></i>
+            </div>
+        </div>
+        
+        <!-- 主要内容 -->
+        <div class="p-6 -mt-12">
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gray-800 text-center mb-6 text-shadow">
+                    下午好问候
+                </h1>
+                
+                <p class="text-gray-600 text-center mb-6">
+                    请输入您的姓名，获取专属问候
+                </p>
+                
+                <!-- 输入表单 -->
+                <form id="greetingForm" class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+                            您的姓名
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                                <i class="fa fa-user"></i>
+                            </span>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                required
+                                placeholder="请输入您的姓名" 
+                                class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom"
+                            >
+                        </div>
+                    </div>
+                    
+                    <button 
+                        type="submit" 
+                        class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-custom transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    >
+                        <i class="fa fa-magic mr-2"></i>获取问候
+                    </button>
+                </form>
+                
+                <!-- 结果显示区域 -->
+                <div id="greetingResult" class="mt-6 hidden">
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 text-center border border-indigo-100">
+                        <p id="greetingMessage" class="text-[clamp(1.2rem,2.5vw,1.6rem)] font-semibold text-gray-800"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="p-4 text-center text-gray-500 text-sm">
+            <p>祝您度过愉快的下午 <i class="fa fa-smile-o text-accent"></i></p>
+        </div>
+    </div>
+    
+    <script>
+        // 获取DOM元素
+        const form = document.getElementById('greetingForm');
+        const nameInput = document.getElementById('name');
+        const resultContainer = document.getElementById('greetingResult');
+        const messageElement = document.getElementById('greetingMessage');
+        
+        // 表单提交处理
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // 阻止表单默认提交行为
+            
+            // 获取输入的姓名并去除前后空格
+            const name = nameInput.value.trim();
+            
+            if (name) {
+                // 生成问候消息
+                const message = `${name}下午好！`;
+                
+                // 显示结果
+                messageElement.textContent = message;
+                resultContainer.classList.remove('hidden');
+                
+                // 添加动画效果
+                resultContainer.classList.add('animate-fade-in');
+                setTimeout(() => {
+                    resultContainer.classList.remove('animate-fade-in');
+                }, 500);
+                
+                // 滚动到结果区域（在移动设备上有用）
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+        
+        // 输入框聚焦时隐藏结果
+        nameInput.addEventListener('focus', function() {
+            resultContainer.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
